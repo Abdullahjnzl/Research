@@ -100,6 +100,7 @@ public class MainFrame extends JFrame {
 	private JLabel lblQueries;
 	private JLabel hashtagsLeft;
 	private JTextField since_tf;
+	private JTextField until_tf;
 
 	/**
 	 * Launch the application.
@@ -155,6 +156,13 @@ public class MainFrame extends JFrame {
 				if (!since.equals("YYYY-MM-DD") || !since.equals("")) {
 					query.setSince(since);
 				}
+
+				String until = until_tf.getText().toString().trim();
+				if (!until.equals("YYYY-MM-DD") || !until.equals("")) {
+					query.setUntil(until);
+					System.out.println(until);
+				}
+
 				QueryResult result;
 				try {
 					result = twitter.search(query);
@@ -250,6 +258,11 @@ public class MainFrame extends JFrame {
 							if (!since.equals("YYYY-MM-DD") || !since.equals("")) {
 								query.setSince(since);
 								System.out.println(since);
+							}
+							String until = until_tf.getText().toString().trim();
+							if (!until.equals("YYYY-MM-DD") || !until.equals("")) {
+								query.setUntil(until);
+								System.out.println(until);
 							}
 							query = query.count(200);
 
@@ -453,7 +466,7 @@ public class MainFrame extends JFrame {
 		setResizable(false);
 		setTitle("Twitter Crawler v2.0");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 497, 262);
+		setBounds(100, 100, 497, 302);
 		Image image = new ImageIcon(getClass().getResource("tweet-icon.png")).getImage();
 		setIconImage(image);
 		contentPane = new JPanel();
@@ -464,13 +477,13 @@ public class MainFrame extends JFrame {
 		JLabel lblDevelopedBy = new JLabel("Developed By : Abdullah Nazzal");
 		lblDevelopedBy.setForeground(Color.GRAY);
 		lblDevelopedBy.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblDevelopedBy.setBounds(298, 211, 193, 14);
+		lblDevelopedBy.setBounds(298, 249, 193, 14);
 		contentPane.add(lblDevelopedBy);
 
 		JLabel lblTwitterCrawlerV = new JLabel("Twitter Crawler v2.0");
 		lblTwitterCrawlerV.setForeground(Color.GRAY);
 		lblTwitterCrawlerV.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblTwitterCrawlerV.setBounds(20, 211, 133, 14);
+		lblTwitterCrawlerV.setBounds(18, 249, 133, 14);
 		contentPane.add(lblTwitterCrawlerV);
 
 		textField = new JTextField();
@@ -611,7 +624,7 @@ public class MainFrame extends JFrame {
 		progressBar = new JProgressBar();
 		progressBar.setVisible(false);
 		progressBar.setForeground(SystemColor.textHighlight);
-		progressBar.setBounds(10, 142, 340, 23);
+		progressBar.setBounds(18, 167, 340, 23);
 		contentPane.add(progressBar);
 
 		exitBtn = new JButton("Exit");
@@ -624,38 +637,38 @@ public class MainFrame extends JFrame {
 		contentPane.add(exitBtn);
 
 		hashtag_lbl = new JLabel("");
-		hashtag_lbl.setBounds(113, 167, 95, 14);
+		hashtag_lbl.setBounds(111, 203, 95, 14);
 		hashtag_lbl.setHorizontalAlignment(JLabel.RIGHT);
 		contentPane.add(hashtag_lbl);
 
 		lblDownloading = new JLabel("Downloading");
 		lblDownloading.setVisible(false);
 		lblDownloading.setForeground(SystemColor.textHighlight);
-		lblDownloading.setBounds(20, 167, 95, 14);
+		lblDownloading.setBounds(18, 203, 95, 14);
 		ImageIcon icon = new ImageIcon(getClass().getResource("loading.gif"));
 		lblDownloading.setIcon(icon);
 		contentPane.add(lblDownloading);
 
 		lblQueries = new JLabel("Queries: ");
 		lblQueries.setVisible(false);
-		lblQueries.setBounds(46, 192, 56, 14);
+		lblQueries.setBounds(46, 228, 56, 14);
 		contentPane.add(lblQueries);
 
 		queries_lbl = new JLabel("");
-		queries_lbl.setBounds(98, 192, 46, 14);
+		queries_lbl.setBounds(98, 228, 46, 14);
 		contentPane.add(queries_lbl);
 
 		label11 = new JLabel("Tweets: ");
 		label11.setVisible(false);
-		label11.setBounds(142, 192, 56, 14);
+		label11.setBounds(142, 228, 56, 14);
 		contentPane.add(label11);
 
 		tweets_lbl = new JLabel("");
-		tweets_lbl.setBounds(196, 192, 46, 14);
+		tweets_lbl.setBounds(196, 228, 46, 14);
 		contentPane.add(tweets_lbl);
 
 		hashtagsLeft = new JLabel("");
-		hashtagsLeft.setBounds(218, 167, 131, 14);
+		hashtagsLeft.setBounds(216, 203, 131, 14);
 		contentPane.add(hashtagsLeft);
 
 		JLabel lblSince = new JLabel("Since: ");
@@ -669,6 +682,17 @@ public class MainFrame extends JFrame {
 		since_tf.setColumns(10);
 		since_tf.setText("YYYY-MM-DD");
 		since_tf.setForeground(Color.GRAY);
+
+		JLabel lblUntil = new JLabel("Until: ");
+		lblUntil.setBounds(157, 148, 46, 14);
+		contentPane.add(lblUntil);
+
+		until_tf = new JTextField();
+		until_tf.setText("YYYY-MM-DD");
+		until_tf.setForeground(Color.GRAY);
+		until_tf.setColumns(10);
+		until_tf.setBounds(196, 146, 153, 20);
+		contentPane.add(until_tf);
 
 	}
 
