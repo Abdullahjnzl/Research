@@ -130,7 +130,7 @@ public class MainFrame extends JFrame {
 			WORKBOOK = new XSSFWorkbook();
 			SHEET = WORKBOOK.createSheet("data");
 			Row row = SHEET.createRow(ROWCOUNT++);
-			Cell cell1, cell2, cell3, cell4, cell10;
+			Cell cell1, cell2, cell3, cell4, cell10, cell11, cell14;
 			cell1 = row.createCell(0);
 			cell1.setCellValue("ID");
 			cell2 = row.createCell(1);
@@ -141,6 +141,10 @@ public class MainFrame extends JFrame {
 			cell4.setCellValue("Text");
 			cell10 = row.createCell(4);
 			cell10.setCellValue("Filtered Text");
+			cell11 = row.createCell(5);
+			cell11.setCellValue("Date");
+			cell14 = row.createCell(6);
+			cell14.setCellValue("Country");
 
 			AccessToken accessToken = new AccessToken(ACCESS_TOKEN, ACCESS_TOKEN_SECRET);
 			Twitter twitter = new TwitterFactory().getInstance();
@@ -153,14 +157,13 @@ public class MainFrame extends JFrame {
 				Query query = new Query(TWEET);
 				query = query.count(100);
 				String since = since_tf.getText().toString().trim();
-				if (!since.equals("YYYY-MM-DD") || !since.equals("")) {
+				if (!since.equals("YYYY-MM-DD") && !since.isEmpty()) {
 					query.setSince(since);
 				}
 
 				String until = until_tf.getText().toString().trim();
-				if (!until.equals("YYYY-MM-DD") || !until.equals("")) {
+				if (!until.equals("YYYY-MM-DD") && !until.isEmpty()) {
 					query.setUntil(until);
-					System.out.println(until);
 				}
 
 				QueryResult result;
@@ -181,8 +184,9 @@ public class MainFrame extends JFrame {
 					for (Status tweet : tweets) {
 
 						if (!found(tweet)) {
+
 							Row row1 = SHEET.createRow(ROWCOUNT++);
-							Cell cell5, cell6, cell7, cell8, cell9;
+							Cell cell5, cell6, cell7, cell8, cell9, cell13, cell15;
 							cell5 = row1.createCell(0);
 							CellStyle style = WORKBOOK.createCellStyle();
 							style.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
@@ -196,6 +200,13 @@ public class MainFrame extends JFrame {
 							cell8.setCellValue(tweet.getText());
 							cell9 = row1.createCell(4);
 							cell9.setCellValue(texts.get(texts.size() - 1));
+							cell13 = row1.createCell(5);
+							cell13.setCellValue(tweet.getCreatedAt().toString());
+							cell15 = row1.createCell(6);
+							if (tweet.getPlace() != null) {
+								cell15.setCellValue(tweet.getPlace().getCountry().toString());
+							} else
+								cell15.setCellValue("null");
 							progressBar.setValue(++counter);
 						} else {
 							progressBar.setValue(++counter);
@@ -216,6 +227,8 @@ public class MainFrame extends JFrame {
 					SHEET.autoSizeColumn(2);
 					SHEET.autoSizeColumn(3);
 					SHEET.autoSizeColumn(4);
+					SHEET.autoSizeColumn(5);
+					SHEET.autoSizeColumn(6);
 					WORKBOOK.write(OUT);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(null, "can't write to file " + DESTPATH + "\n" + e.getMessage(),
@@ -230,7 +243,7 @@ public class MainFrame extends JFrame {
 				}
 				ROWCOUNT = 0;
 				texts = new ArrayList<String>();
-			} else if (OPTION == true) { // multi tweets
+			}else if (OPTION == true) { // multi tweets
 				progressBar.setValue(0);
 				String line = "";
 				int counter = 0;
@@ -255,14 +268,12 @@ public class MainFrame extends JFrame {
 
 							Query query = new Query(item);
 							String since = since_tf.getText().toString().trim();
-							if (!since.equals("YYYY-MM-DD") || !since.equals("")) {
+							if (!since.equals("YYYY-MM-DD") && !since.isEmpty()) {
 								query.setSince(since);
-								System.out.println(since);
 							}
 							String until = until_tf.getText().toString().trim();
-							if (!until.equals("YYYY-MM-DD") || !until.equals("")) {
+							if (!until.equals("YYYY-MM-DD") && !until.isEmpty()) {
 								query.setUntil(until);
-								System.out.println(until);
 							}
 							query = query.count(200);
 
@@ -292,7 +303,7 @@ public class MainFrame extends JFrame {
 
 									if (!found(tweet)) {
 										Row row1 = SHEET.createRow(ROWCOUNT++);
-										Cell cell5, cell6, cell7, cell8, cell9;
+										Cell cell5, cell6, cell7, cell8, cell9, cell12, cell16;
 										cell5 = row1.createCell(0);
 										CellStyle style = WORKBOOK.createCellStyle();
 										style.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
@@ -306,6 +317,13 @@ public class MainFrame extends JFrame {
 										cell8.setCellValue(tweet.getText());
 										cell9 = row1.createCell(4);
 										cell9.setCellValue(texts.get(texts.size() - 1));
+										cell12 = row1.createCell(5);
+										cell12.setCellValue(tweet.getCreatedAt());
+										cell16 = row1.createCell(6);
+										if (tweet.getPlace() != null) {
+											cell16.setCellValue(tweet.getPlace().getCountry().toString());
+										} else
+											cell16.setCellValue("null");
 									} else {
 										continue;
 									}
@@ -339,6 +357,8 @@ public class MainFrame extends JFrame {
 					SHEET.autoSizeColumn(2);
 					SHEET.autoSizeColumn(3);
 					SHEET.autoSizeColumn(4);
+					SHEET.autoSizeColumn(5);
+					SHEET.autoSizeColumn(6);
 					WORKBOOK.write(OUT);
 
 				} catch (IOException e) {
@@ -353,6 +373,7 @@ public class MainFrame extends JFrame {
 				}
 
 			}
+
 			try {
 				OUT.close();
 
@@ -409,9 +430,16 @@ public class MainFrame extends JFrame {
 			if (text.startsWith("New post:"))
 				text = text.replace("New post:", "");
 			text = text.trim();
-			Pattern pattern = Pattern.compile("[\" [^\\p{InArabic}]+]");
-			Matcher matcher = pattern.matcher(text);
-			text = matcher.replaceAll(" ");
+			if (rdbtnArabic.isSelected()) {
+				Pattern pattern = Pattern.compile("[\" [^\\p{InArabic}]+]");
+				Matcher matcher = pattern.matcher(text);
+				text = matcher.replaceAll(" ");
+			}
+			if(rdbtnEnglish.isSelected()){
+				Pattern pattern = Pattern.compile("\\W+");
+				Matcher matcher = pattern.matcher(text);
+				text = matcher.replaceAll(" ");
+			}
 
 			text = text.trim();
 			if (!texts.contains(text)) {
@@ -421,6 +449,7 @@ public class MainFrame extends JFrame {
 				return true;
 
 		}
+
 
 		protected void pause() {
 			// try {
