@@ -62,7 +62,9 @@ import twitter4j.auth.AccessToken;
 public class MainFrame extends JFrame {
 
 	/**
-	 * 
+	 * Twitter Crawler v 2.3
+	 * Abdullah Nazzal
+	 * Using twitter4j and POI libraries.
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -103,7 +105,7 @@ public class MainFrame extends JFrame {
 	private JTextField until_tf;
 
 	/**
-	 * Launch the application.
+	 *
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
